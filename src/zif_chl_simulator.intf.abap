@@ -24,6 +24,9 @@ INTERFACE zif_chl_simulator
          VALUE(r_result) TYPE zif_chl_simulator=>tt_draw,
      get_current_level
        RETURNING
-         VALUE(r_result) TYPE i.
+         VALUE(r_result) TYPE i,
+     set_draws
+       IMPORTING
+         i_draws TYPE tt_draw.
 
 ENDINTERFACE.

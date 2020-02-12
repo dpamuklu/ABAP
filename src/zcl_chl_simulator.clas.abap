@@ -18,14 +18,18 @@ PUBLIC SECTION.
     get_current_level      FOR zif_chl_simulator~get_current_level,
     tt_draw                FOR zif_chl_simulator~tt_draw,           "types
     tt_team                FOR zif_chl_simulator~tt_team,
-    tt_team_names          FOR zif_chl_simulator~tt_team_names.
+    tt_team_names          FOR zif_chl_simulator~tt_team_names,
+    set_draws              FOR zif_chl_simulator~set_draws.
+
 
 PROTECTED SECTION.
 PRIVATE SECTION.
   DATA: random        TYPE REF TO cl_abap_random_int,
         draws         TYPE tt_draw,
+        teams         TYPE tt_team,
         current_level TYPE i VALUE 4,
-        initial_teams TYPE tt_team_names.
+        initial_teams TYPE tt_team_names,
+        initial_draw  TYPE boolean VALUE abap_true.
 ENDCLASS.
 
 CLASS zcl_chl_simulator IMPLEMENTATION.
@@ -53,9 +57,14 @@ CLASS zcl_chl_simulator IMPLEMENTATION.
 
     DATA(lv_first_team_index)  = -1.
     DATA(lv_second_team_index) = 0.
-    DATA(lt_teams) = get_qualified_teams( ).
 
-    current_level = current_level - 1.
+    DATA(lt_teams) = COND #( WHEN initial_draw EQ abap_false
+                             THEN get_qualified_teams( )
+                             ELSE teams ).
+
+    IF initial_draw EQ abap_false.
+      current_level = current_level - 1.
+    ENDIF.
 
     DO lines( lt_teams )  / 2 TIMES.
       lv_first_team_index = lv_first_team_index + 2.
@@ -65,6 +74,8 @@ CLASS zcl_chl_simulator IMPLEMENTATION.
                                           iv_level        = current_level ).
       APPEND lo_object TO draws.
     ENDDO.
+
+    initial_draw = abap_false.
 
   ENDMETHOD.
 
@@ -174,6 +185,12 @@ CLASS zcl_chl_simulator IMPLEMENTATION.
                                          ( name = `Dortmund` )
                                          ( name = `Liverpool` )
                                          ( name = `Atletico Madrid` ) ).
+
+    LOOP AT initial_teams REFERENCE INTO DATA(lr_team).
+      DATA(lo_team) = NEW zcl_chl_team( iv_name = lr_team->name ).
+      INSERT lo_team INTO TABLE teams.
+    ENDLOOP.
+
   ENDMETHOD.
 
   METHOD get_draws.
@@ -183,4 +200,8 @@ CLASS zcl_chl_simulator IMPLEMENTATION.
   METHOD get_current_level.
     r_result = current_level.
   ENDMETHOD.
+  METHOD zif_chl_simulator~set_draws.
+    me->draws = i_draws.
+  ENDMETHOD.
+
 ENDCLASS.
