@@ -3,20 +3,33 @@ CLASS zcl_chl_app_controller DEFINITION
   FINAL
   CREATE PUBLIC .
 
-PUBLIC SECTION.
-  INTERFACES:
-    if_oo_adt_classrun.
-PROTECTED SECTION.
-PRIVATE SECTION.
+  PUBLIC SECTION.
+    INTERFACES:
+      if_oo_adt_classrun.
+    ALIASES:
+      main FOR if_oo_adt_classrun~main.
+    METHODS execute
+      IMPORTING
+        out TYPE any OPTIONAL.
+
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+
 ENDCLASS.
 
 CLASS zcl_chl_app_controller IMPLEMENTATION.
-  METHOD if_oo_adt_classrun~main.
+  METHOD main.
+    execute( out ).
+  ENDMETHOD.
+
+  METHOD execute.
+
+    DATA: lo_viewer TYPE REF TO zif_chl_simulator_viewer.
 
     DATA(lo_simulator) = NEW zcl_chl_simulator( ).
     lo_simulator->set_initial_teams( ).
 
-    DATA(lo_viewer) = NEW zcl_chl_simulate_consol_viewer( i_out = out ).
+    lo_viewer = zcl_chl_simulate_view_factory=>get_instance( out = out ).
 
     DO .
       IF lo_simulator->get_current_level( ) EQ 1.
@@ -37,6 +50,6 @@ CLASS zcl_chl_app_controller IMPLEMENTATION.
           data          = lo_simulator->get_qualified_teams( )
           current_level = lo_simulator->get_current_level(  ) ).
     ENDDO.
-
   ENDMETHOD.
+
 ENDCLASS.
