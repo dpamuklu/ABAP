@@ -24,12 +24,10 @@ CLASS zcl_chl_app_controller IMPLEMENTATION.
 
   METHOD execute.
 
-    DATA: lo_viewer TYPE REF TO zif_chl_simulator_viewer.
-
     DATA(lo_simulator) = NEW zcl_chl_simulator( ).
     lo_simulator->set_initial_teams( ).
 
-    lo_viewer = zcl_chl_simulate_view_factory=>get_instance( out = out ).
+    DATA(lo_viewer) = zcl_chl_simulate_view_factory=>get_instance( out = out ).
 
     DO .
       IF lo_simulator->get_current_level( ) EQ 1.

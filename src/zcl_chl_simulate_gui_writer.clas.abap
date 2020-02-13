@@ -14,7 +14,9 @@ CLASS zcl_chl_simulate_gui_writer IMPLEMENTATION.
   METHOD zif_chl_simulator_viewer~print_qualify.
     DATA: lo_object TYPE REF TO zcl_chl_team.
 
-    WRITE |------------------------------------------| .
+    WRITE |------------------------------------------|.
+    NEW-LINE.
+    WRITE |WINNERS:|.
     LOOP AT data REFERENCE INTO DATA(lr_team).
       lo_object ?= lr_team->*.
       IF current_level EQ 1.
@@ -23,6 +25,8 @@ CLASS zcl_chl_simulate_gui_writer IMPLEMENTATION.
         WRITE lo_object->get_name( ).
       ENDIF.
     ENDLOOP.
+    SKIP.
+    SKIP.
   ENDMETHOD.
 
   METHOD zif_chl_simulator_viewer~print_results.
@@ -35,22 +39,30 @@ CLASS zcl_chl_simulate_gui_writer IMPLEMENTATION.
 
       IF lo_object->info-first_game IS BOUND.
 
+        NEW-LINE.
         WRITE `----------------FIRST_GAME_RESULT----------------`.
+        NEW-LINE.
 
         WRITE |{ lo_object->info-first_team->get_name( ) } {
                  lo_object->info-first_game->get_first_team_score( ) } - {
                  lo_object->info-first_game->get_second_team_score( ) } {
                  lo_object->info-second_team->get_name( ) }| .
+
+        NEW-LINE.
       ENDIF.
 
       IF lo_object->info-second_game IS BOUND.
 
+        NEW-LINE.
         WRITE `----------------SECOND_GAME_RESULT----------------`.
+        NEW-LINE.
 
         WRITE |{ lo_object->info-second_team->get_name( ) } {
                  lo_object->info-second_game->get_first_team_score( ) } - {
                  lo_object->info-second_game->get_second_team_score( ) } {
                  lo_object->info-first_team->get_name( ) }| .
+
+        NEW-LINE.
       ENDIF.
     ENDLOOP.
   ENDMETHOD.
